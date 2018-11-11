@@ -1,68 +1,50 @@
 # Modules
 import os
-import csv
+import csv  
 
-electiondataCSV = os.path.join('resources','election_data.csv')
+# Path to collect data from the python-challenges/pybank folder
+budgetdataCSV = os.path.join('budget_data.csv')
 
+uniq_dates = [] 
 rows = 0
-voter_id = []
-county = []
-candidate = []
-total_voters = []
-unique_candidates = []
-Khan = []
-Correy = []
-Li =[]
-O_Tooley = []
+p_and_l = []
+differences =[]
 
-with open(electiondataCSV, 'r') as electiondata:
-    csv_reader = csv.reader(electiondata)
+with open(budgetdataCSV, 'r') as budgetdata:
+    csv_reader = csv.reader(budgetdata)
 
     header = next(csv_reader)
 
-    for row in csv_reader:
-        total_voters.append(row[0])
-        candidate.append(str(row[2]))
+    for row in csv_reader: 
+        rows = rows + 1
+        if row[0] not in uniq_dates:
+            uniq_dates.append(row[0])
 
-    for i in candidate:
-        if not i in unique_candidates:
-            unique_candidates.append(i)  
+            p_and_l.append(int(row[1]))  
+            
+    for i in range(1,len(p_and_l)):
+        differences.append(p_and_l[i] - p_and_l[i-1])
 
-    for name in candidate:
-        if name == "Khan":
-            Khan.append(name)
-        elif name == "Correy":
-            Correy.append(name)
-        elif name == "Li":
-            Li.append(name)
-        elif name == "O'Tooley":
-            O_Tooley.append(name)
+        avg_rev_change = sum(differences)/len(differences)
+
+        max_rev_change = max(differences)
+
+        min_rev_change = min(differences)
+       
+        max_rev_change_date = str(uniq_dates[differences.index(max(differences))+1])
+
+        min_rev_change_date = str(uniq_dates[differences.index(min(differences))+1])
+
+        
+
+print("Financial Analysis")
+print("---------------------------------------------")
+print("Total Months:" + str(rows))
+print("Net Total: $", + sum(p_and_l))
+print("Average Revenue Change: $", + round(avg_rev_change))
+print("Greatest Increase in Revenue:", max_rev_change_date,"($", max_rev_change,")")
+print("Greatest Decrease in Revenue:", min_rev_change_date,"($", min_rev_change,")")
 
 
-    khan_percentage = round(((len(Khan)/len(total_voters))*100),2)  
-    correy_percentage = round(((len(Correy)/len(total_voters))*100),2)  
-    li_percentage = round(((len(Li)/len(total_voters))*100),2)  
-    o_tooley_percentage = round(((len(O_Tooley)/len(total_voters))*100),2)  
 
 
-
-print("Election Results")   
-print("------------------------")       
-print("Total Voters:",len(total_voters))  
-print("------------------------")
-print(f"Khan: {khan_percentage}% ({len(Khan)})")
-print(f"Correy: {correy_percentage}% ({len(Correy)})")
-print(f"Li: {li_percentage}% ({len(Li)})")
-print(f"O'Tooley: {o_tooley_percentage}% ({len(O_Tooley)})")
-print("------------------------")
-          
-if khan_percentage > correy_percentage and khan_percentage > li_percentage and khan_percentage > o_tooley_percentage:
-        print("Winner: Khan")
-if correy_percentage > khan_percentage and correy_percentage > li_percentage and correy_percentage > o_tooley_percentage:
-        print("Winner: Correy")
-if li_percentage > khan_percentage and li_percentage > correy_percentage and li_percentage > o_tooley_percentage:
-        print("Winner: Li")
-if o_tooley_percentage > khan_percentage and o_tooley_percentage > correy_percentage and o_tooley_percentage > li_percentage:
-        print("Winner: O'Tooley")
-
-print("------------------------")
